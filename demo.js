@@ -1,4 +1,6 @@
 
+/*prvi*/
+
 var baseUrl = 'https://rest.ehrscape.com/rest/v1';
 var queryUrl = baseUrl + '/query';
 
