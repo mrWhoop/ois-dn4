@@ -14,7 +14,8 @@ function getSessionId() {
     return response.responseJSON.sessionId;
 }
 
-function preberiEHRodBolnika() {
+
+function preberiEHRodBolnika(EHR) {
 	sessionId = getSessionId();
 
 	var ehrId = $("#preberiEHRid").val();
@@ -28,8 +29,20 @@ function preberiEHRodBolnika() {
 			headers: {"Ehr-Session": sessionId},
 	    	success: function (data) {
 				var party = data.party;
-				$("#preberiSporocilo").html("<span class='obvestilo label label-success fade-in'>Bolnik '" + party.firstNames + " " + party.lastNames + "', ki se je rodil '" + party.dateOfBirth + "'.</span>");
-				console.log("Bolnik '" + party.firstNames + " " + party.lastNames + "', ki se je rodil '" + party.dateOfBirth + "'.");
+				var spol = "moški";
+				if(party.gender = "FEMALE"){
+					spol="ženski";
+				}
+				$("#preberiSporocilo").html("<div class='text-left'>" +
+											"<table class='table table-striped table-hover'>" +
+											"<tr><td><b>Ime: </b></td>" + "<td>" + party.firstNames + "</td></tr>" + 
+											"<tr><td><b>Priimek: </b></td>" + "<td>" + party.lastNames + "</td></tr>" + 
+											"<tr><td><b>Spol: </b></td>" + "<td>" + spol + "</td></tr>" + 
+											"<tr><td><b>Datum rojstva: </b></td>" + "<td>" + party.dateOfBirth + "</td></tr>" +
+											
+											"</table></div>");
+				$("#meritveVitalnihZnakovEHRid").val(ehrId.toString());
+				console.log(party);
 			},
 			error: function(err) {
 				$("#preberiSporocilo").html("<span class='obvestilo label label-danger fade-in'>Napaka '" + JSON.parse(err.responseText).userMessage + "'!");
