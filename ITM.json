@@ -1,0 +1,10 @@
+{"ITMss":[
+    {"ITMs":0.0, "ITMz":15.99, "msg":"huda podhranjenost", "label":"label label-danger"},
+    {"ITMs":16.0, "ITMz":16.99, "msg":"zmerna podhranjenost", "label":"label label-danger"},
+    {"ITMs":17.0, "ITMz":18.49, "msg":"podhranjenost", "label":"label label-warning"},
+    {"ITMs":18.5, "ITMz":24.99, "msg":"normalna hranjenost", "label":"label label-success"},
+    {"ITMs":25.0, "ITMz":29.99, "msg":"prekomerna hranjenost", "label":"label label-warning"},
+    {"ITMs":30.0, "ITMz":34.99, "msg":"debelost prve stopnje", "label":"label label-danger"},
+    {"ITMs":35.0, "ITMz":39.99, "msg":"debelost druge stopnje", "label":"label label-danger"},
+    {"ITMs":40.0, "ITMz":100.0, "msg":"debelost tretje stopnje", "label":"label label-danger"}
+]}

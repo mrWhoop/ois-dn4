@@ -19,8 +19,16 @@ function preberiEHRodBolnika(EHR) {
 	sessionId = getSessionId();
 
 	var ehrId = $("#preberiEHRid").val();
-
+	var selectEH = $("#preberiObstojeciEHR").val();
+	
 	if (!ehrId || ehrId.trim().length == 0) {
+		if (!selectEH || selectEH.trim().length == 0){
+		$("#preberiSporocilo").html("<span class='obvestilo label label-warning fade-in'>Prosim vnesite zahtevan podatek!");
+		}
+		ehrId = selectEH;	
+	}
+	
+	if (!ehrId || ehrId.trim().length == 0){
 		$("#preberiSporocilo").html("<span class='obvestilo label label-warning fade-in'>Prosim vnesite zahtevan podatek!");
 	} else {
 		$.ajax({
@@ -42,7 +50,10 @@ function preberiEHRodBolnika(EHR) {
 											
 											"</table></div>");
 				$("#meritveVitalnihZnakovEHRid").val(ehrId.toString());
-				console.log(party);
+				$("#preberiObstojeciEHR").val("");
+				$("#preberiEHRid").val("");
+				$("#rezultatMeritveVitalnihZnakov").html("");
+
 			},
 			error: function(err) {
 				$("#preberiSporocilo").html("<span class='obvestilo label label-danger fade-in'>Napaka '" + JSON.parse(err.responseText).userMessage + "'!");
@@ -67,7 +78,7 @@ function preberiMeritveVitalnihZnakov() {
 	    	headers: {"Ehr-Session": sessionId},
 	    	success: function (data) {
 				var party = data.party;
-				$("#rezultatMeritveVitalnihZnakov").html("<br/><span>Pridobivanje podatkov za <b>'" + tip + "'</b> bolnika <b>'" + party.firstNames + " " + party.lastNames + "'</b>.</span><br/><br/>");
+				$("#rezultatMeritveVitalnihZnakov").html("<br/><span>Pridobivanje podatkov za <b>'" + tip + " " + party.firstNames + " " + party.lastNames + "'</b>.</span><br/><br/>");
 				if (tip == "telesna temperatura") {
 					$.ajax({
 					    url: baseUrl + "/view/" + ehrId + "/" + "body_temperature",
@@ -147,6 +158,53 @@ function preberiMeritveVitalnihZnakov() {
 					    }
 					});
 				}
+				else if (tip == "ITM") {
+					$.ajax({
+					    url: baseUrl + "/view/" + ehrId + "/" + "weight",
+					    type: 'GET',
+					    headers: {"Ehr-Session": sessionId},
+					    success: function (resW) {
+					    	/*-----*/
+					    	$.ajax({
+					    		url: baseUrl + "/view/" + ehrId + "/" + "height",
+								type: 'GET',
+					    		headers: {"Ehr-Session": sessionId},
+					    		success: function(resH) {
+					    			console.log(resW,resH);
+					    			
+					    			if (resW.length > 0 && resH.length > 0) {
+								    	var results = "<table class='table table-striped table-hover'><tr><th>Datum in ura</th><th class='text-right'>višina</th><th class='text-right'>teža</th><th class='text-right'>ITM</th><th class='text-center'>interpretacija</th></tr>";
+								        
+								        $.getJSON("ITM.json", function(ITMss) {
+										
+								        for (var i = 0; i < resW.length; i++) {
+								        	var ITM = (resW[i].weight/(resH[i].height*resH[i].height/10000)).toFixed(1);
+								        	
+								        	var ITMmsg = " ";
+								        	for(var j = 0; j < 8; j++){
+												if(ITM >= ITMss.ITMss[j].ITMs && ITM <= ITMss.ITMss[j].ITMz){
+													ITMmsg ="<font style='font-size:15px'><span class='" + ITMss.ITMss[j].label + "'>" + ITMss.ITMss[j].msg + "</span>";
+												}
+											}
+								        	
+								            results += "<tr><td>" + resW[i].time + "</td><td class='text-right'>" + resH[i].height + " " 	+ resH[i].unit + "</td><td class='text-right'>" + resW[i].weight + " " + resW[i].unit +"</td><td class='text-right'>" + ITM +"</td><td class='text-center'>" + ITMmsg +"</td>";
+								        }
+								        results += "</table>";
+								        $("#rezultatMeritveVitalnihZnakov").append(results);
+								        });
+							    	} else {
+							    		$("#preberiMeritveVitalnihZnakovSporocilo").html("<span class='obvestilo label label-warning fade-in'>Ni podatkov!</span>");
+							    	}
+					    			
+					    		}
+					    	});
+					    },
+					    error: function() {
+					    	$("#preberiMeritveVitalnihZnakovSporocilo").html("<span class='obvestilo label label-danger fade-in'>Napaka '" + JSON.parse(err.responseText).userMessage + "'!");
+							console.log(JSON.parse(err.responseText).userMessage);
+					    }
+					});
+				} 
 	    	},
 	    	error: function(err) {
 	    		$("#preberiMeritveVitalnihZnakovSporocilo").html("<span class='obvestilo label label-danger fade-in'>Napaka '" + JSON.parse(err.responseText).userMessage + "'!");
