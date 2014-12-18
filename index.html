@@ -11,6 +11,9 @@
 	    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
 	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 	    <script src="app.js"></script>
+	    <script src="http://d3js.org/d3.v3.js"></script>
+	    <script src="graph.js"></script>
+	    <link rel="stylesheet" href="graph.css">
 	    <style>
 	  		body {padding: 10px;}
 	  		.btn {margin-top: 10px;}
@@ -39,13 +42,14 @@
 						<div class="row">
 							<div class="col-lg-6 col-md-6 col-sm-6"><b>Pregled</b> meritev <b>vitalnih znakov</b></div>
 							<div class="col-lg-3 col-md-3 col-sm-3"><select class="form-control input-sm" id="preberiTipZaVitalneZnake"><option value="telesna temperatura">telesna temperatura</option><option value="telesna temperatura AQL">telesna temperatura (filter na podhladitev)</option><option value="telesna teža">telesna teža</option><option value="ITM">ITM</option></select></div>
-		
+							<div id="graph"></div>
 						</div>
 					</div>				
-					<div class="panel-body">
+					<div class="panel-body" id="panelBody">
 						<span class="label label-default">EHR ID</span><input id="meritveVitalnihZnakovEHRid" type="text" class="form-control input-mini" placeholder="Vnesite vaš EHR ID">
 						<button type="button" class="btn btn-primary btn-xs" onclick="preberiMeritveVitalnihZnakov('telesna temperatura')">Preberi meritve vitalnih znakov</button><span id="preberiMeritveVitalnihZnakovSporocilo"></span>
 						<div id="rezultatMeritveVitalnihZnakov"></div>
+						<div id="graph123"></div>
 				  	</div>
 				</div>			
 			</div>

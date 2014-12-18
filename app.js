@@ -14,6 +14,13 @@ function getSessionId() {
     return response.responseJSON.sessionId;
 }
 
+function parseDateFunction(input) {
+  var parts = input.split('T');
+  var datum = parts[0].split('-');
+  //var cas = parts[1].split(':');
+  //return new Date(datum[0], datum[1]-1, datum[2]); // Note: months are 0-based
+  return parts[0];
+}
 
 function preberiEHRodBolnika(EHR) {
 	sessionId = getSessionId();
@@ -159,6 +166,7 @@ function preberiMeritveVitalnihZnakov() {
 					});
 				}
 				else if (tip == "ITM") {
+					
 					$.ajax({
 					    url: baseUrl + "/view/" + ehrId + "/" + "weight",
 					    type: 'GET',
@@ -170,16 +178,29 @@ function preberiMeritveVitalnihZnakov() {
 								type: 'GET',
 					    		headers: {"Ehr-Session": sessionId},
 					    		success: function(resH) {
-					    			console.log(resW,resH);
 					    			
 					    			if (resW.length > 0 && resH.length > 0) {
 								    	var results = "<table class='table table-striped table-hover'><tr><th>Datum in ura</th><th class='text-right'>višina</th><th class='text-right'>teža</th><th class='text-right'>ITM</th><th class='text-center'>interpretacija</th></tr>";
+								        
+								        var rawData = new Array();
+								        
+								        
 								        
 								        $.getJSON("ITM.json", function(ITMss) {
 										
 								        for (var i = 0; i < resW.length; i++) {
 								        	var ITM = (resW[i].weight/(resH[i].height*resH[i].height/10000)).toFixed(1);
 								        	
+								        	var datum = parseDateFunction(resW[i].time);
+								        	var detail = {"date":datum, 
+								        				  "pct05": 16,
+										   			      "pct25": 18.5,
+													      "pct50": ITM,
+													      "pct75": 30,
+													      "pct95": 35};
+													      
+											rawData.push(detail);
+
 								        	var ITMmsg = " ";
 								        	for(var j = 0; j < 8; j++){
 												if(ITM >= ITMss.ITMss[j].ITMs && ITM <= ITMss.ITMss[j].ITMz){
@@ -187,11 +208,61 @@ function preberiMeritveVitalnihZnakov() {
 												}
 											}
 								        	
-								            results += "<tr><td>" + resW[i].time + "</td><td class='text-right'>" + resH[i].height + " " 	+ resH[i].unit + "</td><td class='text-right'>" + resW[i].weight + " " + resW[i].unit +"</td><td class='text-right'>" + ITM +"</td><td class='text-center'>" + ITMmsg +"</td>";
+								            results += "<tr><td>" + resW[i].time + "</td><td class='text-right'>" + resH[i].height +  " " + resH[i].unit + "</td><td class='text-right'>" + resW[i].weight + " " + resW[i].unit +"</td><td class='text-right'>" + ITM +"</td><td class='text-center'>" + ITMmsg +"</td>";
 								        }
+								        rawData.reverse();
+								        console.log(data);
 								        results += "</table>";
 								        $("#rezultatMeritveVitalnihZnakov").append(results);
+								        /**/
+								        var wdth = $("#rezultatMeritveVitalnihZnakov").width();
+								        
+								        console.log(wdth);
+								        
+								        	var parseDate  = d3.time.format('%Y-%m-%d').parse;
+										
+									//		d3.json('data.json', function (error, rawData) {
+									//		  if (error) {
+									//		    console.error(error);
+									//		    return;
+									//		  }
+											
+											  var data = rawData.map(function (d) {
+											    return {
+											      date:  parseDate(d.date),
+											      pct05: d.pct05,
+											      pct25: d.pct25,
+											      pct50: d.pct50,
+											      pct75: d.pct75,
+											      pct95: d.pct95
+											    };
+											    
+											  });
+											  
+											  console.log(data);
+											  
+											  d3.json('markers.json', function (error, markerData) {
+											    if (error) {
+											      console.error(error);
+											      return;
+											    }
+											
+											    var markers = markerData.map(function (marker) {
+											      return {
+											        date: parseDate(marker.date),
+											        type: marker.type,
+											        version: marker.version
+											      };
+											    });
+
+												makeChart(data, markers, wdth, "#graph123");
+
+							
+											  });
+							//				});
+								        	
 								        });
+								        
 							    	} else {
 							    		$("#preberiMeritveVitalnihZnakovSporocilo").html("<span class='obvestilo label label-warning fade-in'>Ni podatkov!</span>");
 							    	}
