@@ -25,14 +25,19 @@ svg {
 
 .area.outer,
 .legend .outer {
-  fill: rgba(230, 230, 255, 0.8);
-  stroke: rgba(216, 216, 255, 0.8);
+  fill: rgba(217, 83, 79, 0.8);
+ /* stroke: rgba(216, 216, 255, 0.8);*/
 }
 
 .area.inner,
 .legend .inner {
-  fill: rgba(127, 127, 255, 0.8);
-  stroke: rgba(96, 96, 255, 0.8);
+  fill: rgba(240, 173, 78, 0.8);
+ /* stroke: rgba(96, 96, 255, 0.8);*/
+}
+
+.area.normal,
+.legend .normal {
+  fill: rgba(92, 184, 92, 0.8);
 }
 
 .median-line,

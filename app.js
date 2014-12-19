@@ -53,7 +53,7 @@ function preberiEHRodBolnika(EHR) {
 											"<tr><td><b>Ime: </b></td>" + "<td>" + party.firstNames + "</td></tr>" + 
 											"<tr><td><b>Priimek: </b></td>" + "<td>" + party.lastNames + "</td></tr>" + 
 											"<tr><td><b>Spol: </b></td>" + "<td>" + spol + "</td></tr>" + 
-											"<tr><td><b>Datum rojstva: </b></td>" + "<td>" + party.dateOfBirth + "</td></tr>" +
+											"<tr><td><b>Datum rojstva: </b></td>" + "<td>" + parseDateFunction(party.dateOfBirth) + "</td></tr>" +
 											
 											"</table></div>");
 				$("#meritveVitalnihZnakovEHRid").val(ehrId.toString());
@@ -72,6 +72,8 @@ function preberiEHRodBolnika(EHR) {
 
 function preberiMeritveVitalnihZnakov() {
 	sessionId = getSessionId();	
+
+	$("#graf").remove();
 
 	var ehrId = $("#meritveVitalnihZnakovEHRid").val();
 	var tip = $("#preberiTipZaVitalneZnake").val();
@@ -193,11 +195,11 @@ function preberiMeritveVitalnihZnakov() {
 								        	
 								        	var datum = parseDateFunction(resW[i].time);
 								        	var detail = {"date":datum, 
-								        				  "pct05": 16,
+								        				  "pct05": 17,
 										   			      "pct25": 18.5,
 													      "pct50": ITM,
 													      "pct75": 30,
-													      "pct95": 35};
+													      "pct95": 36};
 													      
 											rawData.push(detail);
 
@@ -214,18 +216,12 @@ function preberiMeritveVitalnihZnakov() {
 								        console.log(data);
 								        results += "</table>";
 								        $("#rezultatMeritveVitalnihZnakov").append(results);
-								        /**/
+								        
 								        var wdth = $("#rezultatMeritveVitalnihZnakov").width();
 								        
 								        console.log(wdth);
 								        
 								        	var parseDate  = d3.time.format('%Y-%m-%d').parse;
-										
-									//		d3.json('data.json', function (error, rawData) {
-									//		  if (error) {
-									//		    console.error(error);
-									//		    return;
-									//		  }
 											
 											  var data = rawData.map(function (d) {
 											    return {
@@ -259,7 +255,6 @@ function preberiMeritveVitalnihZnakov() {
 
 							
 											  });
-							//				});
 								        	
 								        });
 								        
