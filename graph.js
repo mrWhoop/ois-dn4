@@ -2,7 +2,6 @@ function addAxesAndLegend (svg, xAxis, yAxis, margin, chartWidth, chartHeight) {
   var legendWidth  = 200,
       legendHeight = 100;
 
-  // clipping to make sure nothing appears behind legend
   svg.append('clipPath')
     .attr('id', 'axes-clip')
     .append('polygon')
